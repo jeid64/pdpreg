@@ -1,5 +1,26 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" xmlns:tal="http://xml.zope.org/namespaces/tal">
+<script src="static/jquery.js"></script>
+<script>
+function addEvent() {
+	var name = $("input#name").val();
+	var starttime = $("input#starttime").val();
+	var endtime = $("input#endtime").val();
+    var date = $("input#date").val();
+	var dataString = 'name=' + name + '&starttime=' + starttime + '&endtime=' + endtime + '&date=' + date;
+		  $.ajax({
+    		type: "POST",
+    		url: "/addevent",
+    		data: dataString,
+    		success: function(data) {
+    			//$('#loginDIV').empty('');
+    			console.log(data)
+    			//$('#userNumber').text(data.userNumber)
+      			//changeService("play");
+    		}
+  		});
+}
+</script>
 <head>
   <title>The Pyramid Web Application Development Framework</title>
   <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
@@ -14,6 +35,24 @@
   <![endif]-->
 </head>
 <body>
+
+    <form  action="" id="addeventform">
+        <fieldset>
+        <div>
+            Name: <input type="text" name="name" id="name"/>
+        </div>
+        <div>
+            Start Time: <input type="text" name="starttime" id="starttime"/>
+        </div>
+        <div>
+            End Time: <input type="text" name="endtime" id="endtime"/>
+        </div>
+        <div>
+            Date: <input type="text" name="date" id="date"/>
+        </div>
+        <input type="button" value="Submit" id="submitForm" onClick="addEvent()" />
+        </fieldset>
+    </form>
   <div id="wrap">
     <div id="top">
       <div class="top align-center">
