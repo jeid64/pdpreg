@@ -31,11 +31,41 @@ $(document).ready(function() {
 
     // page is now ready, initialize the calendar...
 
-    $('#calendar').fullCalendar({
+    var calendar = $('#calendar').fullCalendar({
         // put your options and callbacks here
-        events: 'https://www.google.com/calendar/feeds/rvkgqt49saqhg4i17fo48u8uk0%40group.calendar.google.com/public/basic'
+        events: 'https://www.google.com/calendar/feeds/rvkgqt49saqhg4i17fo48u8uk0%40group.calendar.google.com/public/basic',
+        header: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'month,agendaWeek,agendaDay'
+        },
+        selectable: true,
+        selectHelper: true,
+        select: function(start, end, allDay) {
+            var title = prompt('Event Title:');
+            if (title) {
+                calendar.fullCalendar('renderEvent',
+                    {
+                        title: title,
+                        start: start,
+                        end: end,
+                        allDay: allDay
+                    },
+                    true // make the event "stick"
+                );
+                jQuery.post(
+                    "/addevent" // your url
+                    , { // re-use event's data
+                        title: title,
+                        start: start,
+                        end: end,
+                        allDay: allDay
+                    }
+                );
+            }
+            calendar.fullCalendar('unselect');
+        },
     })
-
 });
 </script>
 <body>
