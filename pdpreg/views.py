@@ -1,6 +1,15 @@
 from pyramid.view import view_config
 import arrow
 from dateutil.tz import gettz
+from gcal import GoogleCalendar
+
+class Arrow(arrow.Arrow):
+    def convertGoogleCalendar(self):
+        """
+            Converts Arrow object into a string that can be sent to Google Calendar.
+            Google Calendar expects datetimes in this format, 2011-06-03T10:00:00.000-07:00
+        """
+        return(self.format('YYYY-MM-DDTHH:mm:ssZZ'))
 
 def convertFullTime(datettimeString):
 	"""
@@ -9,14 +18,7 @@ def convertFullTime(datettimeString):
 	"""
 	datetime = datettimeString[:24]
 	timezone = datettimeString[35:38]
-	return arrow.Arrow.strptime(datetime, "%a %b %d %Y %H:%M:%S", gettz(timezone))
-
-def convertArrowGoogleCalendar(arrowObject):
-	"""
-		Converts Arrow object into a string that can be sent to Google Calendar.
-		Google Calendar expects datetimes in this format, 2011-06-03T10:00:00.000-07:00
-	"""
-	return(arrowObject.format('YYYY-MM-DDTHH:mm:ssZZ'))
+	return Arrow.strptime(datetime, "%a %b %d %Y %H:%M:%S", gettz(timezone))
 
 @view_config(route_name='addevent', renderer='json')
 def addevent(request):
@@ -27,7 +29,10 @@ def addevent(request):
 	allDay = request.params['allDay']
 	#closeddate = request.params['closeddate']
 	print (title + start + end + allDay)
-	print(convertFullTime(start))
+	start = convertFullTime(start)
+	end = convertFullTime(end)
+	gcal = GoogleCalendar()
+	gcal.addEvent(start, end, title)
 	return {'username' : 123, 'userNumber' : 0}
 
 @view_config(route_name='home', renderer='templates/mytemplate.pt')
